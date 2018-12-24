@@ -13,5 +13,5 @@ https://www.zhihu.com/api/v4/members/su-fei-17/followers?include=data%5B*%5D.ans
 
 截图（加载较慢）
 ![image](https://github.com/LemonBottom/ZhihuUser/blob/master/images/zhihuUser1.png?raw=true)
-![image](https://github.com/LemonBottom/ZhihuUser/blob/master/images/zhihuUser2.png?raw=true)
-![image](https://github.com/LemonBottom/ZhihuUser/blob/master/images/zhihuUser1.png?raw=true)
+![image](https://github.com/LemonBottom/ZhihuUser/blob/master/images/zhihuUser2.jpg?raw=true)
+![image](https://github.com/LemonBottom/ZhihuUser/blob/master/images/zhihuUser3.png?raw=true)
