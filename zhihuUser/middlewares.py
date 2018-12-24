@@ -6,7 +6,7 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-from scrapy.downloadermiddlewares.retry import RetryMiddleware
+import logging
 import random
 import redis
 
@@ -119,36 +119,36 @@ class RandomProxy:
         return cls(spider.settings.getlist("REDIS"))
 
     def process_request(self, request, spider):
-        request.meta["proxy"] = "https://" + self.redis_con.srandmember("https_proxies", 1)[0].decode("utf-8")
-
-
-class MyRetryMiddleware:
-
-    def __init__(self, redis_setting):
-        self.redis_con = redis.Redis(*redis_setting)
-
-    @classmethod
-    def from_crawler(cls, spider):
-        return cls(spider.settings.getlist("REDIS"))
-
-    def delete_and_change_proxy(self, proxy):
-        if "https" in proxy:
-            self.redis_con.srem("https_proxies", proxy[8:])
-            return self.redis_con.srandmember("https_proxies", 1)[0].decode("utf-8")
-        else:
-            self.redis_con.srem("http_proxies", proxy[7:])
-            return self.redis_con.srandmember("http_proxies", 1)[0].decode("utf-8")
+        """
+        为每个request添加随机的代理
+        :param request:
+        :param spider:
+        :return:
+        """
+        request.meta["proxy"] = "https://" + self.redis_con.srandmember("qingting_https_proxies", 1)[0].decode("utf-8")
 
     def process_exception(self, request, exception, spider):
+        """
+        当访问出错时将request返回给调度队列，等待再次被调用
+        :param request:
+        :param exception:
+        :param spider:
+        :return:
+        """
         if exception:
-            print(exception)
-            request.meta['proxy'] = "https://" + self.delete_and_change_proxy(request.meta['proxy'])
-            print("连接异常，更换代理ip重试", request.meta['proxy'])
+            logging.error("连接异常，返回请求队列重试")
             return request
 
     def process_response(self, request, response, spider):
+        """
+        当访问出错时将request返回给调度队列，等待再次被调用
+        :param request:
+        :param response:
+        :param spider:
+        :return:
+        """
         if response.status != 200:
-            request.meta['proxy'] = "https://" + self.delete_and_change_proxy(request.meta['proxy'])
-            print("状态码异常，更换代理ip重试", request.meta['proxy'])
+            logging.error("状态码异常，返回请求队列重试")
             return request
         return response
+
