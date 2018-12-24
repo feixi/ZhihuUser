@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for zhihuUser project
+# Scrapy settings for ZhihuUser project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -9,10 +9,10 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'zhihuUser'
+BOT_NAME = 'ZhihuUser'
 
-SPIDER_MODULES = ['zhihuUser.spiders']
-NEWSPIDER_MODULE = 'zhihuUser.spiders'
+SPIDER_MODULES = ['ZhihuUser.spiders']
+NEWSPIDER_MODULE = 'ZhihuUser.spiders'
 
 MONGO = ["127.0.0.1", 27017]
 REDIS = ["127.0.0.1", 6379]
@@ -75,26 +75,26 @@ COOKIES_ENABLED = False
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'zhihuUser.middlewares.ZhihuuserSpiderMiddleware': 543,
+#    'ZhihuUser.middlewares.ZhihuuserSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-	'zhihuUser.middlewares.ZhihuuserDownloaderMiddleware': 543,
-	'zhihuUser.middlewares.RandomProxy': 898,
+	'ZhihuUser.middlewares.ZhihuuserDownloaderMiddleware': 543,
+	'ZhihuUser.middlewares.RandomProxy': 898,
 }
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
 # EXTENSIONS = {
-#    'zhihuUser.extensions.StopSpider': 1,
+#    'ZhihuUser.extensions.StopSpider': 1,
 # }
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'zhihuUser.pipelines.ZhihuuserPipeline': 300,
+   'ZhihuUser.pipelines.ZhihuuserPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
