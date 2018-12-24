@@ -33,12 +33,10 @@ class UserSpider(RedisCrawlSpider):
             yield item
             # 新的用户关注者列表
             new_user_url = f'https://www.zhihu.com/api/v4/members/{u["url_token"]}/followers?include=data%5B*%5D.answer_count%2Carticles_count%2Cgender%2Cfollower_count%2Cis_followed%2Cis_following%2Cbadge%5B%3F(type%3Dbest_answerer)%5D.topics&offset=0&limit=20'
-            # print("new_user: ",new_user_url)
             yield scrapy.Request(new_user_url)
         # 翻页
         if len(temp_data) == 20:
             old_offset = re.findall("offset=(\d+)&", response.url)[0]
             new_offset = str(int(old_offset) + 20)
             new_offset_url = response.url.replace(f"offset={old_offset}&", f"offset={new_offset}&")
-            # print("new_offset: ", new_offset_url)
             yield scrapy.Request(new_offset_url)
