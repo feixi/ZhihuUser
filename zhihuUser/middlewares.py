@@ -5,10 +5,10 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-from scrapy import signals
+from scrapy import signals, Request
 import logging
 import random
-import redis
+import re
 
 
 class ZhihuuserSpiderMiddleware(object):
@@ -110,45 +110,33 @@ class ZhihuuserDownloaderMiddleware(object):
 
 
 class RandomProxy:
-
-    def __init__(self, redis_settings):
-        self.redis_con = redis.Redis(*redis_settings)
+    """
+    将每次请求加上代理ip
+    """
+    def __init__(self, proxy_key):
+        self.proxy_key = proxy_key
 
     @classmethod
-    def from_crawler(cls, spider):
-        return cls(spider.settings.getlist("REDIS"))
+    def from_crawler(cls, crawler):
+        return cls(crawler.settings.get("PROXY_KEY"))
+
+    def set_proxy(self, server):
+        return server.srandmember(self.proxy_key, 1)[0].decode("utf-8")
 
     def process_request(self, request, spider):
-        """
-        为每个request添加随机的代理
-        :param request:
-        :param spider:
-        :return:
-        """
-        request.meta["proxy"] = "https://" + self.redis_con.srandmember("qingting_https_proxies", 1)[0].decode("utf-8")
+        request.meta["proxy"] = "https://" + self.set_proxy(spider.server)
 
     def process_exception(self, request, exception, spider):
-        """
-        当访问出错时将request返回给调度队列，等待再次被调用
-        :param request:
-        :param exception:
-        :param spider:
-        :return:
-        """
         if exception:
-            logging.error("连接异常，返回请求队列重试")
-            return request
+            logging.error("连接异常，返回消息队列")
+            spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"]))
+            return Request(request.url, callback=request.callback, dont_filter=True)
 
     def process_response(self, request, response, spider):
-        """
-        当访问出错时将request返回给调度队列，等待再次被调用
-        :param request:
-        :param response:
-        :param spider:
-        :return:
-        """
         if response.status != 200:
-            logging.error("状态码异常，返回请求队列重试")
-            return request
+            logging.error("状态码异常，返回消息队列")
+            spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"]))
+            return Request(request.url, callback=request.callback, dont_filter=True)
         return response
+
 

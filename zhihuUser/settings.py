@@ -9,13 +9,13 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-BOT_NAME = 'ZhihuUser'
+BOT_NAME = 'zhihuUser'
 
-SPIDER_MODULES = ['ZhihuUser.spiders']
-NEWSPIDER_MODULE = 'ZhihuUser.spiders'
+SPIDER_MODULES = ['zhihuUser.spiders']
+NEWSPIDER_MODULE = 'zhihuUser.spiders'
 
 MONGO = ["127.0.0.1", 27017]
-REDIS = ["127.0.0.1", 6379]
+PROXY_KEY = "https_proxies"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = [
 	"Mozilla/5.0 (Windows; U; Windows NT 6.1; en-us) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1",
@@ -47,7 +47,6 @@ SCHEDULER_QUEUE_CLASS = "scrapy_redis.queue.SpiderQueue"
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-CLOSESPIDER_ITEMCOUNT = 100000
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 CONCURRENT_REQUESTS = 48
@@ -81,8 +80,8 @@ COOKIES_ENABLED = False
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
-	'ZhihuUser.middlewares.ZhihuuserDownloaderMiddleware': 543,
-	'ZhihuUser.middlewares.RandomProxy': 898,
+	'zhihuUser.middlewares.ZhihuuserDownloaderMiddleware': 543,
+	'zhihuUser.middlewares.RandomProxy': 591,
 }
 
 # Enable or disable extensions
@@ -94,7 +93,7 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-   'ZhihuUser.pipelines.ZhihuuserPipeline': 300,
+   'zhihuUser.pipelines.ZhihuuserPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
