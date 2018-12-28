@@ -120,22 +120,25 @@ class RandomProxy:
     def from_crawler(cls, crawler):
         return cls(crawler.settings.get("PROXY_KEY"))
 
-    def set_proxy(self, server):
-        return server.srandmember(self.proxy_key, 1)[0].decode("utf-8")
-
     def process_request(self, request, spider):
-        request.meta["proxy"] = "https://" + self.set_proxy(spider.server)
+        request.meta["proxy"] = "https://" + spider.server.srandmember(self.proxy_key, 1)[0].decode("utf-8")
 
     def process_exception(self, request, exception, spider):
         if exception:
             logging.error("连接异常，返回消息队列")
-            spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"]))
+            try:
+                spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"])[0])
+            except KeyError:
+                logging.error("代码池干涸")
             return Request(request.url, callback=request.callback, dont_filter=True)
 
     def process_response(self, request, response, spider):
         if response.status != 200:
             logging.error("状态码异常，返回消息队列")
-            spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"]))
+            try:
+                spider.server.srem(self.proxy_key, re.findall(r'https\:\/\/(.+)', request.meta["proxy"])[0])
+            except KeyError:
+                logging.error("代码池干涸")
             return Request(request.url, callback=request.callback, dont_filter=True)
         return response
 
